@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="adapter.min.js" ></script>
+    <script type="text/javascript" src="webrtcstreamer.js" ></script>
+    <script type="text/javascript" src="jquery-1.7.1.min.js" ></script>
+    <style>
+        video{
+            width: 300px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+<p>视频播放</p>
+<div>
+    <video id="video1" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video2" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video3" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video4" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+</div>
+<div>
+    <video id="video5" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video6" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video7" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video8" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+</div>
+<div>
+    <video id="video9" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video10" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video11" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video12" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+</div>
+<div>
+    <video id="video13" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video14" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video15" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+    <video id="video16" muted autoplay loop controls>muted controls disablePictureInPicture</video>
+</div>
+<script>
+    var webRtcServer = null;
+    var videoMap=new Map();
+    $('video').click(function(e){
+        var ID = e.target.id;//获取当前点击事件的元素
+        if(videoMap.get(ID)!=null)
+        {
+            closeVideo(ID,videoMap.get(ID));
+
+        }
+        else
+        {
+            realViewHik(ID,'admin','ardkj12345','112.98.126.2');
+        }
+
+    });
+    //页面加载时加载视频画面
+    window.onload = function() {
+        // for(var i=1;i<3;i++)
+        // {
+        //     realViewHik('video'+i,'admin','xzx12345','192.168.1.104');
+        // }
+    }
+    //预览海康相机http://112.98.126.2:18000
+    function realViewHik(elem,username,password,ipaddr) {
+        webRtcServer = new WebRtcStreamer(elem, "http://112.98.126.2:18000");
+        var rtspUrl="rtsp://"+username+":"+password+"@"+ipaddr+":201/h264/ch1/main/av_stream"
+        var option="rtptransport=tcp";
+        webRtcServer.connect(rtspUrl, null, "rtptransport=tcp");
+        videoMap.set(elem,webRtcServer);
+    }
+    function closeVideo(id,webrtc)
+    {
+        webrtc.disconnect();
+        videoMap.delete(id);
+    }
+    //页面退出时销毁
+    window.onbeforeunload = function() {
+        webRtcServer.disconnect();
+    }
+</script>
+</body>
+</html>
